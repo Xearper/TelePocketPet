@@ -13,20 +13,22 @@ class HamsterKombat {
         };
 
         this.upgrades = {
-            attack: { level: 1, cost: 10 },
-            defense: { level: 1, cost: 10 },
-            health: { level: 1, cost: 20 },
-            regen: { level: 1, cost: 30 }
+            attack: { level: 1, cost: 10, increment: 2 },
+            defense: { level: 1, cost: 10, increment: 1 },
+            health: { level: 1, cost: 20, increment: 10 },
+            regen: { level: 1, cost: 30, increment: 1 }
         };
 
         this.enemyTypes = [
             { name: "Tiny Mouse", multiplier: 0.8, rewards: { exp: 15, coins: 5 } },
             { name: "Angry Gerbil", multiplier: 1, rewards: { exp: 20, coins: 8 } },
             { name: "Fierce Rat", multiplier: 1.2, rewards: { exp: 25, coins: 10 } },
-            { name: "Rabid Rabbit", multiplier: 1.5, rewards: { exp: 30, coins: 15 } }
+            { name: "Rabid Rabbit", multiplier: 1.5, rewards: { exp: 30, coins: 15 } },
+            { name: "Crazy Chinchilla", multiplier: 1.8, rewards: { exp: 35, coins: 20 } }
         ];
 
         this.battleInterval = null;
+        this.currentEnemy = null;
 
         this.elements = {
             hamster: document.getElementById('hamster'),
@@ -49,7 +51,11 @@ class HamsterKombat {
             attack: document.getElementById('attack'),
             defense: document.getElementById('defense'),
             maxHealthUpgrade: document.getElementById('max-health-upgrade'),
-            regen: document.getElementById('regen')
+            regen: document.getElementById('regen'),
+            navHamster: document.getElementById('nav-hamster'),
+            navUpgrades: document.getElementById('nav-upgrades'),
+            hamsterSection: document.getElementById('hamster-section'),
+            upgradesSection: document.getElementById('upgrades-section')
         };
 
         this.initTelegramMiniApp();
@@ -65,7 +71,27 @@ class HamsterKombat {
         this.elements.upgradeDefense.addEventListener('click', () => this.upgrade('defense'));
         this.elements.upgradeHealth.addEventListener('click', () => this.upgrade('health'));
         this.elements.upgradeRegen.addEventListener('click', () => this.upgrade('regen'));
-        this.elements.battle.addEventListener('click', () => this.startBattle());
+        this.elements.battle.addEventListener('click', () => this.toggleBattle());
+        this.elements.navHamster.addEventListener('click', () => this.showSection('hamster'));
+        this.elements.navUpgrades.addEventListener('click', () => this.showSection('upgrades'));
+    }
+
+    showSection(section) {
+        if (section === 'hamster') {
+            this.elements.hamsterSection.classList.remove('hidden');
+            this.elements.upgradesSection.classList.add('hidden');
+            this.elements.navHamster.classList.add('text-hamster-orange');
+            this.elements.navHamster.classList.remove('text-white');
+            this.elements.navUpgrades.classList.add('text-white');
+            this.elements.navUpgrades.classList.remove('text-hamster-orange');
+        } else {
+            this.elements.hamsterSection.classList.add('hidden');
+            this.elements.upgradesSection.classList.remove('hidden');
+            this.elements.navHamster.classList.remove('text-hamster-orange');
+            this.elements.navHamster.classList.add('text-white');
+            this.elements.navUpgrades.classList.remove('text-white');
+            this.elements.navUpgrades.classList.add('text-hamster-orange');
+        }
     }
 
     trainHamster() {
@@ -88,17 +114,17 @@ class HamsterKombat {
 
             switch(type) {
                 case 'attack':
-                    this.stats.attack += 2;
+                    this.stats.attack += upgrade.increment;
                     break;
                 case 'defense':
-                    this.stats.defense += 1;
+                    this.stats.defense += upgrade.increment;
                     break;
                 case 'health':
-                    this.stats.maxHealth += 10;
+                    this.stats.maxHealth += upgrade.increment;
                     this.stats.health = this.stats.maxHealth;
                     break;
                 case 'regen':
-                    this.stats.regen += 1;
+                    this.stats.regen += upgrade.increment;
                     break;
             }
 
@@ -146,74 +172,75 @@ class HamsterKombat {
         }, 1000);
     }
 
-    startBattle() {
+    toggleBattle() {
         if (this.battleInterval) {
-            clearInterval(this.battleInterval);
-            this.elements.battle.textContent = "Battle!";
-            this.elements.battle.classList.remove("bg-green-600");
-            this.elements.battle.classList.add("bg-red-600");
-            this.elements.hamster.classList.remove("shake");
-            this.battleInterval = null;
-            return;
+            this.endBattle();
+        } else {
+            this.startBattle();
         }
-
-        const enemyType = this.enemyTypes[Math.floor(Math.random() * this.enemyTypes.length)];
-        const enemy = {
-            name: `${enemyType.name} Lv.${this.stats.level}`,
-            health: Math.floor(this.stats.maxHealth * enemyType.multiplier),
-            attack: Math.floor(this.stats.attack * enemyType.multiplier),
-            defense: Math.floor(this.stats.defense * enemyType.multiplier),
-            rewards: enemyType.rewards
-        };
-
-        this.elements.battle.textContent = "Stop Battle";
-        this.elements.battle.classList.remove("bg-red-600");
-        this.elements.battle.classList.add("bg-green-600");
-        this.elements.hamster.classList.add("shake");
-
-        this.battleInterval = setInterval(() => {
-            this.battleRound(enemy);
-        }, 1000);
     }
 
-    battleRound(enemy) {
-        // Player attacks
-        const playerDamage = Math.max(0, this.stats.attack - enemy.defense);
-        enemy.health -= playerDamage;
-        this.logBattle(`You deal ${playerDamage} damage to ${enemy.name}`);
+    startBattle() {
+        const enemyType = this.enemyTypes[Math.floor(Math.random() * this.enemyTypes.length)];
+        this.currentEnemy = {
+            name: `${enemyType.name} Lv.${this.stats.level}`,
+            health: Math.floor(this.stats.maxHealth * enemyType.multiplier),
+            maxHealth: Math.floor(this.stats.maxHealth * enemyType.multiplier),
+            attack: Math.floor(this.stats.attack * enemyType.multiplier),
+            defense: Math.floor(this.stats.defense * enemyType.multiplier),
+            rewards: {
+                exp: Math.floor(enemyType.rewards.exp * this.stats.level),
+                coins: Math.floor(enemyType.rewards.coins * this.stats.level)
+            }
+        };
 
-        if (enemy.health <= 0) {
-            this.logBattle(`You defeated ${enemy.name}!`);
-            const expGain = enemy.rewards.exp * this.stats.level;
-            const coinGain = enemy.rewards.coins * this.stats.level;
-            this.stats.exp += expGain;
-            this.stats.coins += coinGain;
-            this.logBattle(`You gained ${expGain} EXP and ${coinGain} coins!`);this.checkLevelUp();
-            this.updateUI();
-            this.saveProgress();
-            clearInterval(this.battleInterval);
-            this.elements.battle.textContent = "Battle!";
-            this.elements.battle.classList.remove("bg-green-600");
-            this.elements.battle.classList.add("bg-red-600");
-            this.elements.hamster.classList.remove("shake");
-            this.battleInterval = null;
+        this.elements.battle.textContent = "Retreat";
+        this.elements.battle.classList.remove("bg-red-600", "hover:bg-red-700");
+        this.elements.battle.classList.add("bg-yellow-600", "hover:bg-yellow-700");
+        this.elements.hamster.classList.add("shake");
+
+        this.logBattle(`A wild ${this.currentEnemy.name} appears!`);
+        this.battleInterval = setInterval(() => this.battleRound(), 1000);
+    }
+
+    endBattle() {
+        clearInterval(this.battleInterval);
+        this.elements.battle.textContent = "Battle!";
+        this.elements.battle.classList.remove("bg-yellow-600", "hover:bg-yellow-700");
+        this.elements.battle.classList.add("bg-red-600", "hover:bg-red-700");
+        this.elements.hamster.classList.remove("shake");
+        this.battleInterval = null;
+        this.currentEnemy = null;
+        this.logBattle("You retreated from the battle.");
+    }
+
+    battleRound() {
+        if (!this.currentEnemy) return;
+
+        // Player attacks
+        const playerDamage = Math.max(0, this.stats.attack - this.currentEnemy.defense);
+        this.currentEnemy.health -= playerDamage;
+        this.logBattle(`You deal ${playerDamage} damage to ${this.currentEnemy.name}`);
+
+        if (this.currentEnemy.health <= 0) {
+            this.logBattle(`You defeated ${this.currentEnemy.name}!`);
+            this.stats.exp += this.currentEnemy.rewards.exp;
+            this.stats.coins += this.currentEnemy.rewards.coins;
+            this.logBattle(`You gained ${this.currentEnemy.rewards.exp} EXP and ${this.currentEnemy.rewards.coins} coins!`);
+            this.checkLevelUp();
+            this.endBattle();
             return;
         }
 
         // Enemy attacks
-        const enemyDamage = Math.max(0, enemy.attack - this.stats.defense);
+        const enemyDamage = Math.max(0, this.currentEnemy.attack - this.stats.defense);
         this.stats.health -= enemyDamage;
-        this.logBattle(`${enemy.name} deals ${enemyDamage} damage to you`);
+        this.logBattle(`${this.currentEnemy.name} deals ${enemyDamage} damage to you`);
 
         if (this.stats.health <= 0) {
-            this.logBattle(`You were defeated by ${enemy.name}!`);
+            this.logBattle(`You were defeated by ${this.currentEnemy.name}!`);
             this.stats.health = 1; // Prevent death, set health to 1
-            clearInterval(this.battleInterval);
-            this.elements.battle.textContent = "Battle!";
-            this.elements.battle.classList.remove("bg-green-600");
-            this.elements.battle.classList.add("bg-red-600");
-            this.elements.hamster.classList.remove("shake");
-            this.battleInterval = null;
+            this.endBattle();
         }
 
         this.updateUI();
@@ -270,11 +297,6 @@ class HamsterKombat {
             } else {
                 this.elements.username.style.display = 'none';
             }
-
-            window.Telegram.WebApp.MainButton.setText('Share Progress').show().onClick(() => {
-                const message = `I've reached level ${this.stats.level} in Hamster Kombat with ${this.stats.exp} EXP and ${this.stats.coins} coins!`;
-                window.Telegram.WebApp.sendData(message);
-            });
         } else {
             console.warn('Telegram WebApp is not available. Running in standalone mode.');
             this.elements.username.style.display = 'none';
