@@ -1,12 +1,5 @@
-// Load environment variables
-const ENV = {
-    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
-    TELEGRAM_WEB_APP_URL: process.env.TELEGRAM_WEB_APP_URL,
-    PET_IMAGE_URL: process.env.PET_IMAGE_URL,
-    INITIAL_ENERGY: parseInt(process.env.INITIAL_ENERGY, 10),
-    ENERGY_REGEN_INTERVAL: parseInt(process.env.ENERGY_REGEN_INTERVAL, 10),
-    UPGRADE_COST_MULTIPLIER: parseFloat(process.env.UPGRADE_COST_MULTIPLIER),
-};
+// Use the configuration from the HTML file
+const ENV = window.PocketPetConfig;
 
 class PocketPet {
     constructor() {
@@ -85,35 +78,42 @@ class PocketPet {
     }
 
     initTelegramMiniApp() {
-        window.Telegram.WebApp.ready();
-        
-        // Set the username
-        const user = window.Telegram.WebApp.initDataUnsafe.user;
-        if (user) {
-            this.elements.username.textContent = `@${user.username || 'Unknown'}`;
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            
+            // Set the username
+            const user = window.Telegram.WebApp.initDataUnsafe.user;
+            if (user) {
+                this.elements.username.textContent = `@${user.username || 'Unknown'}`;
+            } else {
+                this.elements.username.style.display = 'none';
+            }
+
+            // Setup the main button
+            window.Telegram.WebApp.MainButton.setText('Share Progress').show().onClick(() => {
+                const message = `I've reached level ${this.level} in PocketPet with ${this.exp} EXP!`;
+                window.Telegram.WebApp.sendData(message);
+            });
+
+            // Setup theme
+            this.applyTelegramTheme();
         } else {
+            console.warn('Telegram WebApp is not available. Running in standalone mode.');
             this.elements.username.style.display = 'none';
         }
-
-        // Setup the main button
-        window.Telegram.WebApp.MainButton.setText('Share Progress').show().onClick(() => {
-            const message = `I've reached level ${this.level} in PocketPet with ${this.exp} EXP!`;
-            window.Telegram.WebApp.sendData(message);
-        });
-
-        // Setup theme
-        this.applyTelegramTheme();
     }
 
     applyTelegramTheme() {
-        const colorScheme = window.Telegram.WebApp.colorScheme;
-        document.body.classList.toggle('dark', colorScheme === 'dark');
-        
-        if (colorScheme === 'dark') {
-            document.body.classList.remove('bg-gray-100');
-            document.body.classList.add('bg-gray-900', 'text-white');
-            document.querySelector('.bg-white').classList.remove('bg-white');
-            document.querySelector('.shadow-lg').classList.add('bg-gray-800');
+        if (window.Telegram && window.Telegram.WebApp) {
+            const colorScheme = window.Telegram.WebApp.colorScheme;
+            document.body.classList.toggle('dark', colorScheme === 'dark');
+            
+            if (colorScheme === 'dark') {
+                document.body.classList.remove('bg-gray-100');
+                document.body.classList.add('bg-gray-900', 'text-white');
+                document.querySelector('.bg-white').classList.remove('bg-white');
+                document.querySelector('.shadow-lg').classList.add('bg-gray-800');
+            }
         }
     }
 }
