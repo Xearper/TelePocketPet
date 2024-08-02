@@ -26,37 +26,56 @@
         .animate-bounce-slow {
             animation: bounce 2s infinite;
         }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .shake {
+            animation: shake 0.5s;
+            animation-iteration-count: infinite;
+        }
     </style>
 </head>
-<body class="bg-hamster-brown text-white flex flex-col items-center justify-center min-h-screen font-sans">
-    <div class="bg-hamster-orange bg-opacity-20 rounded-lg shadow-lg p-6 w-full max-w-md relative">
+<body class="bg-gradient-to-b from-hamster-brown to-hamster-orange text-white flex flex-col items-center justify-center min-h-screen font-sans">
+    <div class="bg-white bg-opacity-20 backdrop-blur-md rounded-lg shadow-lg p-6 w-full max-w-md relative">
         <div id="username" class="absolute top-2 right-2 bg-hamster-orange text-hamster-brown px-3 py-1 rounded-full text-sm font-bold"></div>
-        <h1 class="text-4xl font-bold mb-4 text-hamster-orange text-center">Hamster Kombat</h1>
+        <h1 class="text-4xl font-bold mb-4 text-hamster-orange text-center text-shadow">Hamster Kombat</h1>
         <div class="relative mb-4">
-            <img id="hamster" src="hamster.png" alt="Your Hamster" class="w-32 h-32 mx-auto rounded-full border-4 border-hamster-orange cursor-pointer animate-bounce-slow">
+            <img id="hamster" src="hamster-1lvl.png" alt="Your Hamster" class="w-40 h-40 mx-auto rounded-full border-4 border-hamster-orange cursor-pointer animate-bounce-slow">
             <div id="exp-gain" class="absolute top-0 right-0 bg-green-500 text-white px-2 py-1 rounded-full text-sm font-bold opacity-0 transition-opacity duration-300">+1</div>
         </div>
-        <div class="flex justify-between mb-2">
-            <p class="text-lg"><span class="font-bold text-hamster-orange">Level:</span> <span id="level" class="font-semibold">1</span></p>
-            <p class="text-lg"><span class="font-bold text-hamster-orange">EXP:</span> <span id="exp" class="font-semibold">0</span>/<span id="exp-to-level" class="font-semibold">100</span></p>
-        </div>
-        <div class="mb-2 bg-hamster-brown rounded-full h-4">
-            <div id="exp-bar" class="bg-hamster-orange h-4 rounded-full" style="width: 0%"></div>
-        </div>
-        <div class="flex justify-between mb-2">
-            <p class="text-lg"><span class="font-bold text-hamster-orange">Health:</span> <span id="health" class="font-semibold">100</span>/<span id="max-health" class="font-semibold">100</span></p>
-            <p class="text-lg"><span class="font-bold text-hamster-orange">Coins:</span> <span id="coins" class="font-semibold">0</span></p>
-        </div>
-        <div class="mb-4 bg-hamster-brown rounded-full h-4">
-            <div id="health-bar" class="bg-green-500 h-4 rounded-full" style="width: 100%"></div>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="bg-hamster-brown bg-opacity-50 rounded-lg p-2">
+                <p class="text-lg"><span class="font-bold text-hamster-orange">Level:</span> <span id="level" class="font-semibold">1</span></p>
+                <p class="text-lg"><span class="font-bold text-hamster-orange">EXP:</span> <span id="exp" class="font-semibold">0</span>/<span id="exp-to-level" class="font-semibold">100</span></p>
+                <div class="bg-hamster-brown rounded-full h-2 mt-1">
+                    <div id="exp-bar" class="bg-hamster-orange h-2 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="bg-hamster-brown bg-opacity-50 rounded-lg p-2">
+                <p class="text-lg"><span class="font-bold text-hamster-orange">Health:</span> <span id="health" class="font-semibold">100</span>/<span id="max-health" class="font-semibold">100</span></p>
+                <p class="text-lg"><span class="font-bold text-hamster-orange">Coins:</span> <span id="coins" class="font-semibold">0</span></p>
+                <div class="bg-hamster-brown rounded-full h-2 mt-1">
+                    <div id="health-bar" class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
+                </div>
+            </div>
         </div>
         <div class="grid grid-cols-2 gap-2 mb-4">
-            <button id="upgrade-attack" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600">Upgrade Attack (Cost: 10)</button>
-            <button id="upgrade-defense" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600">Upgrade Defense (Cost: 10)</button>
-            <button id="upgrade-health" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600">Upgrade Health (Cost: 20)</button>
-            <button id="upgrade-regen" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600">Upgrade Regen (Cost: 30)</button>
+            <button id="upgrade-attack" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600 transform hover:scale-105">Attack: <span id="attack">10</span> (Cost: 10)</button>
+            <button id="upgrade-defense" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600 transform hover:scale-105">Defense: <span id="defense">5</span> (Cost: 10)</button>
+            <button id="upgrade-health" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600 transform hover:scale-105">Max Health: <span id="max-health-upgrade">100</span> (Cost: 20)</button>
+            <button id="upgrade-regen" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600 transform hover:scale-105">Regen: <span id="regen">1</span> (Cost: 30)</button>
         </div>
-        <button id="battle" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg transition-colors duration-200 hover:bg-red-700 mb-4">Battle!</button>
+        <button id="battle" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg transition-colors duration-200 hover:bg-red-700 mb-4 transform hover:scale-105">Battle!</button>
         <div id="battle-log" class="bg-hamster-brown bg-opacity-50 p-2 rounded-lg text-sm h-32 overflow-y-auto"></div>
     </div>
     <script src="script.js"></script>
