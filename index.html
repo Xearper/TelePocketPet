@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PocketPet</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'telegram-blue': '#0088cc',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen font-sans">
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full relative">
+        <div id="username" class="absolute top-2 right-2 bg-telegram-blue text-white px-3 py-1 rounded-full text-sm font-bold"></div>
+        <h1 class="text-4xl font-bold mb-6 text-telegram-blue text-center">PocketPet</h1>
+        <div class="relative mb-6">
+            <img id="pet" src="" alt="Your Pet" class="w-48 h-48 mx-auto rounded-full border-4 border-telegram-blue cursor-pointer transition-transform duration-200 hover:scale-105">
+            <div id="exp-gain" class="absolute top-0 right-0 bg-green-500 text-white px-2 py-1 rounded-full text-sm font-bold opacity-0 transition-opacity duration-300">+1</div>
+        </div>
+        <div class="flex justify-between mb-4">
+            <p class="text-xl"><span class="font-bold text-telegram-blue">EXP:</span> <span id="exp" class="font-semibold">0</span></p>
+            <p class="text-xl"><span class="font-bold text-telegram-blue">Energy:</span> <span id="energy" class="font-semibold">100</span>/100</p>
+        </div>
+        <div class="mb-4 bg-gray-200 rounded-full h-4">
+            <div id="energy-bar" class="bg-telegram-blue h-4 rounded-full" style="width: 100%;"></div>
+        </div>
+        <button id="upgrade" class="w-full bg-telegram-blue text-white px-6 py-3 rounded-lg font-bold text-lg transition-colors duration-200 hover:bg-blue-600">Upgrade (Cost: 10 EXP)</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
