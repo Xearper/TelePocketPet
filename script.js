@@ -32,7 +32,8 @@ class PocketPet {
             upgradeClick: document.getElementById('upgrade-click'),
             upgradeEnergy: document.getElementById('upgrade-energy'),
             upgradeRegen: document.getElementById('upgrade-regen'),
-            upgradeCoin: document.getElementById('upgrade-coin')
+            upgradeCoin: document.getElementById('upgrade-coin'),
+            mainContainer: document.querySelector('.bg-gray-800')  // Add this line
         };
 
         this.initTelegramMiniApp();
@@ -169,8 +170,10 @@ class PocketPet {
             if (colorScheme === 'light') {
                 document.body.classList.remove('bg-pet-dark');
                 document.body.classList.add('bg-gray-100', 'text-pet-dark');
-                document.querySelector('.bg-gray-800').classList.remove('bg-gray-800');
-                document.querySelector('.bg-gray-800').classList.add('bg-white');
+                if (this.elements.mainContainer) {
+                    this.elements.mainContainer.classList.remove('bg-gray-800');
+                    this.elements.mainContainer.classList.add('bg-white');
+                }
             }
         }
     }
