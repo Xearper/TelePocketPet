@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PocketPet</title>
+    <title>Hamster Kombat</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -11,8 +11,8 @@
             theme: {
                 extend: {
                     colors: {
-                        'pet-yellow': '#FFD700',
-                        'pet-dark': '#1F2937',
+                        'hamster-orange': '#FFA500',
+                        'hamster-brown': '#8B4513',
                     }
                 }
             }
@@ -27,43 +27,37 @@
             animation: bounce 2s infinite;
         }
     </style>
-    <script>
-        window.PocketPetConfig = {
-            PET_IMAGE_URL: 'pet.png',
-            INITIAL_ENERGY: 100,
-            ENERGY_REGEN_INTERVAL: 5000,
-            UPGRADE_COST_MULTIPLIER: 1.2
-        };
-    </script>
 </head>
-<body class="bg-pet-dark text-white flex flex-col items-center justify-center min-h-screen font-sans">
-    <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md relative">
-        <div id="username" class="absolute top-2 right-2 bg-pet-yellow text-pet-dark px-3 py-1 rounded-full text-sm font-bold"></div>
-        <h1 class="text-4xl font-bold mb-4 text-pet-yellow text-center">PocketPet</h1>
+<body class="bg-hamster-brown text-white flex flex-col items-center justify-center min-h-screen font-sans">
+    <div class="bg-hamster-orange bg-opacity-20 rounded-lg shadow-lg p-6 w-full max-w-md relative">
+        <div id="username" class="absolute top-2 right-2 bg-hamster-orange text-hamster-brown px-3 py-1 rounded-full text-sm font-bold"></div>
+        <h1 class="text-4xl font-bold mb-4 text-hamster-orange text-center">Hamster Kombat</h1>
         <div class="relative mb-4">
-            <img id="pet" src="" alt="Your Pet" class="w-32 h-32 mx-auto rounded-full border-4 border-pet-yellow cursor-pointer animate-bounce-slow">
+            <img id="hamster" src="hamster.png" alt="Your Hamster" class="w-32 h-32 mx-auto rounded-full border-4 border-hamster-orange cursor-pointer animate-bounce-slow">
             <div id="exp-gain" class="absolute top-0 right-0 bg-green-500 text-white px-2 py-1 rounded-full text-sm font-bold opacity-0 transition-opacity duration-300">+1</div>
         </div>
         <div class="flex justify-between mb-2">
-            <p class="text-lg"><span class="font-bold text-pet-yellow">Level:</span> <span id="level" class="font-semibold">1</span></p>
-            <p class="text-lg"><span class="font-bold text-pet-yellow">EXP:</span> <span id="exp" class="font-semibold">0</span></p>
+            <p class="text-lg"><span class="font-bold text-hamster-orange">Level:</span> <span id="level" class="font-semibold">1</span></p>
+            <p class="text-lg"><span class="font-bold text-hamster-orange">EXP:</span> <span id="exp" class="font-semibold">0</span>/<span id="exp-to-level" class="font-semibold">100</span></p>
         </div>
-        <div class="mb-2 bg-gray-700 rounded-full h-4">
-            <div id="exp-bar" class="bg-pet-yellow h-4 rounded-full" style="width: 0%"></div>
+        <div class="mb-2 bg-hamster-brown rounded-full h-4">
+            <div id="exp-bar" class="bg-hamster-orange h-4 rounded-full" style="width: 0%"></div>
         </div>
         <div class="flex justify-between mb-2">
-            <p class="text-lg"><span class="font-bold text-pet-yellow">Energy:</span> <span id="energy" class="font-semibold">100</span>/100</p>
-            <p class="text-lg"><span class="font-bold text-pet-yellow">Coins:</span> <span id="coins" class="font-semibold">0</span></p>
+            <p class="text-lg"><span class="font-bold text-hamster-orange">Health:</span> <span id="health" class="font-semibold">100</span>/<span id="max-health" class="font-semibold">100</span></p>
+            <p class="text-lg"><span class="font-bold text-hamster-orange">Coins:</span> <span id="coins" class="font-semibold">0</span></p>
         </div>
-        <div class="mb-4 bg-gray-700 rounded-full h-4">
-            <div id="energy-bar" class="bg-blue-500 h-4 rounded-full" style="width: 100%"></div>
+        <div class="mb-4 bg-hamster-brown rounded-full h-4">
+            <div id="health-bar" class="bg-green-500 h-4 rounded-full" style="width: 100%"></div>
         </div>
         <div class="grid grid-cols-2 gap-2 mb-4">
-            <button id="upgrade-click" class="bg-pet-yellow text-pet-dark px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-400">Upgrade Click (Cost: 10)</button>
-            <button id="upgrade-energy" class="bg-pet-yellow text-pet-dark px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-400">Upgrade Energy (Cost: 20)</button>
-            <button id="upgrade-regen" class="bg-pet-yellow text-pet-dark px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-400">Upgrade Regen (Cost: 30)</button>
-            <button id="upgrade-coin" class="bg-pet-yellow text-pet-dark px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-400">Upgrade Coin (Cost: 50)</button>
+            <button id="upgrade-attack" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600">Upgrade Attack (Cost: 10)</button>
+            <button id="upgrade-defense" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600">Upgrade Defense (Cost: 10)</button>
+            <button id="upgrade-health" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600">Upgrade Health (Cost: 20)</button>
+            <button id="upgrade-regen" class="bg-hamster-orange text-hamster-brown px-4 py-2 rounded-lg font-bold text-sm transition-colors duration-200 hover:bg-yellow-600">Upgrade Regen (Cost: 30)</button>
         </div>
+        <button id="battle" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg transition-colors duration-200 hover:bg-red-700 mb-4">Battle!</button>
+        <div id="battle-log" class="bg-hamster-brown bg-opacity-50 p-2 rounded-lg text-sm h-32 overflow-y-auto"></div>
     </div>
     <script src="script.js"></script>
 </body>
